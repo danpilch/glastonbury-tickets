@@ -69,7 +69,7 @@ class GlastonburyTickets(threading.Thread):
         driver = self.get_webdriver(proxy)
         html = driver.page_source
 
-        # If we are not on the holding page, we'll increment the success count for this proxy
+        # If we appear to be on the holding page we'll close the browser
         if "holding page" in html or "processing the maximum" in html or "now sold out" in html:
             driver.quit()
 
