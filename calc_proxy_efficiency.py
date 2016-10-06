@@ -1,3 +1,4 @@
+from selenium.webdriver.common.proxy import *
 from selenium import webdriver
 import threading
 import argparse
@@ -11,15 +12,24 @@ class GlastonburyTickets(threading.Thread):
         self.proxy_list = [line.strip() for line in open(proxy_file, 'r')]
         self.proxy_efficieny = {}
 
-    def proxy_manager(self):
-        pass
+    def proxy_manager(self, proxy_host):
+        proxy = Proxy({
+            'proxyType': ProxyType.MANUAL,
+            'httpProxy': proxy_host,
+            'ftpProxy': proxy_host,
+            'sslProxy': proxy_host,
+            'noProxy': ''
+        })
+        return proxy
+ 
 
     def get_html(self, proxy):
 
         print "Running FF instance for proxy: {0}".format(proxy)
 
         # Load page in Firefox and extract HTML
-        driver = webdriver.Firefox()
+        proxy_instance = self.proxy_manager(proxy)
+        driver = webdriver.Firefox(proxy=proxy_instance)
         driver.get(self.base_url)
         source = driver.page_source
         driver.quit()
