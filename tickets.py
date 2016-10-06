@@ -23,7 +23,7 @@ class GlastonburyTickets(threading.Thread):
         return proxy
  
 
-    def get_html(self, proxy):
+    def get_webdriver(self, proxy):
 
         print "Running FF instance for proxy: {0}".format(proxy)
 
@@ -31,10 +31,8 @@ class GlastonburyTickets(threading.Thread):
         proxy_instance = self.proxy_manager(proxy)
         driver = webdriver.Firefox(proxy=proxy_instance)
         driver.get(self.base_url)
-        source = driver.page_source
-        driver.quit()
 
-        return source
+        return driver
 
     def spawn_browsers(self):
 
@@ -44,6 +42,36 @@ class GlastonburyTickets(threading.Thread):
             t = threading.Thread(target=self.calc_proxy_efficiency, args=(proxy,))
             self.threads.append(t)
             t.start()
+
+    def find_successful_host_from_proxies(self):
+
+        print "\nSpawning browsers for each proxy: {0} browsers will be loaded simultaneously".format(len(self.proxy_list))
+
+        for proxy in self.proxy_list:
+            t = threading.Thread(target=self.find_successful_host, args=(proxy,))
+            self.threads.append(t)
+            t.start()
+
+    def calc_efficiency_for_hosts(self):
+
+        print "\nSpawning browsers for each proxy: {0} browsers will be loaded simultaneously".format(len(self.proxy_list))
+
+        for proxy in self.proxy_list:
+            t = threading.Thread(target=self.calc_proxy_efficiency, args=(proxy,))
+            self.threads.append(t)
+            t.start()
+
+    def find_successful_host(self, proxy):
+
+        print "Will now check if connection is successful for proxy {0}".format(proxy)
+
+        # Get the HTML of the page
+        driver = self.get_webdriver(proxy)
+        html = driver.page_source
+
+        # If we are not on the holding page, we'll increment the success count for this proxy
+        if "holding page" in html or "processing the maximum" in html or "now sold out" in html:
+            driver.quit()
 
     def calc_proxy_efficiency(self, proxy):
 
@@ -58,10 +86,12 @@ class GlastonburyTickets(threading.Thread):
         for x in range(0, 5):
 
             # Get the HTML of the page
-            html = self.get_html(proxy)
+            driver = self.get_webdriver(proxy)
+            html = driver.page_source
+            driver.quit()
 
             # If we are not on the holding page, we'll increment the success count for this proxy
-            if "holding page" not in html:
+            if "holding page" not in html and "processing the maximum" not in html:
                 self.proxy_efficieny[proxy] += 1
 
         print "\nSuccess count for each proxy:"
@@ -81,7 +111,8 @@ def main():
 
     # Start the process
     tickets = GlastonburyTickets(base_url=args.base_url, proxy_file=args.proxy_file)
-    tickets.spawn_browsers()
+    #tickets.calc_efficiency_for_hosts()
+    tickets.find_successful_host_from_proxies()
 
 
 if __name__ == "__main__":
