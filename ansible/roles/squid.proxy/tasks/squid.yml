@@ -1,0 +1,25 @@
+---
+# Set up Squid proxy server
+
+- name: Install Squid Proxy
+  yum:
+    name: squid
+    state: installed
+
+- name: Create Squid configuration
+  template: 
+    src: squid.conf 
+    dest: /etc/squid/ 
+    backup: yes
+
+- name: Configure Squid Proxy User/Password
+  template: 
+    src: passwd 
+    dest: /etc/squid/ 
+    backup: yes
+
+- name: Start Squid Proxy
+  service: 
+    name: squid 
+    state: restarted 
+    enabled: yes
