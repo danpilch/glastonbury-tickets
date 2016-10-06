@@ -5,6 +5,7 @@ import os
 
 
 class GlastonburyTickets(threading.Thread):
+
     def __init__(self, base_url, proxy_file):
         self.threads = []
         self.base_url = base_url
@@ -13,16 +14,24 @@ class GlastonburyTickets(threading.Thread):
     def proxy_manager(self):
         pass
 
-    def browser(self, proxy, base_url):
+    def get_html(self, proxy):
         print "Running FF instance for proxy: {0}".format(proxy)
         driver = webdriver.Firefox()
-        driver.get(base_url)
+        driver.get(self.base_url)
+        source = driver.page_source
+        driver.quit()
+        return source
 
     def spawn_browsers(self):
         for proxy in self.proxy_list:
-            t = threading.Thread(target=self.browser, args=(proxy, self.base_url,))
+            t = threading.Thread(target=self.calc_proxy_efficiency, args=(proxy,))
             self.threads.append(t)
             t.start()
+
+    def calc_proxy_efficiency(self, proxy):
+        for x in range(0, 3):
+            html = self.get_html(proxy)
+            print html
 
 def main():
 
