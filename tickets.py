@@ -9,6 +9,7 @@ class GlastonburyTickets(threading.Thread):
         self.base_url = base_url
         self.proxy_list = [line.strip() for line in open(proxy_file, 'r')]
         self.proxy_efficieny = {}
+        self.proxy_efficieny_semaphore = threading.BoundedSemaphore()
 
     def proxy_manager(self, proxy_host):
         proxy = Proxy({
@@ -78,7 +79,9 @@ class GlastonburyTickets(threading.Thread):
         print "Will now try and load the site {0} times for proxy {1}".format(5, proxy)
 
         # Set initial success count to 0
+        self.proxy_efficieny_semaphore.acquire()
         self.proxy_efficieny[proxy] = 0
+        self.proxy_efficieny_semaphore.release()
 
         # Try via proxy consecuitively {try_count} times in a row
         for x in range(0, 5):
@@ -90,7 +93,9 @@ class GlastonburyTickets(threading.Thread):
 
             # If we are not on the holding page, we'll increment the success count for this proxy
             if "holding page" not in html and "processing the maximum" not in html:
+                self.proxy_efficieny_semaphore.acquire()
                 self.proxy_efficieny[proxy] += 1
+                self.proxy_efficieny_semaphore.release()
 
         print "\nSuccess count for each proxy:"
         print self.proxy_efficieny
