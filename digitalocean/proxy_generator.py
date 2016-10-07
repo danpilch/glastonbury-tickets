@@ -11,7 +11,6 @@ class DOInstances(object):
         self.instance_count = instance_count
         self.region = instance_region
         self.image_size = "512mb"
-        pass
 
     def get_images(self):
         images = self.manager.get_my_images()
