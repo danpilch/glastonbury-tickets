@@ -15,7 +15,6 @@ def main():
 
     # Start the process
     tickets = GlastonburyTickets(base_url=args.base_url, proxy_file=args.proxy_file)
-    #tickets.calc_efficiency_for_hosts()
     tickets.find_successful_host_from_proxies()
 
 
