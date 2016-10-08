@@ -6,7 +6,7 @@ import os
 class DOInstances(object):
     def __init__(self, instance_count, instance_region, server_prefix):
         # Get the api token from your account
-        self.do_api_token = "09858bd19b92d3457af5cac688962d008018c0945d8e36eb85dcac2cd942dd14"
+        self.do_api_token = ""
         self.manager = digitalocean.Manager(token=self.do_api_token)
         self.instance_count = instance_count
         self.region = instance_region
