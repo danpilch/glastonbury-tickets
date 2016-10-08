@@ -1,6 +1,7 @@
 from selenium.webdriver.common.proxy import *
 from selenium import webdriver
 import threading
+import yaml
 from concurrent.futures import ThreadPoolExecutor
 
 class GlastonburyTickets(threading.Thread):
@@ -13,6 +14,9 @@ class GlastonburyTickets(threading.Thread):
         self.proxy_efficieny = {}
         self.proxy_efficieny_semaphore = threading.BoundedSemaphore()
         self.found_valid_proxy = False
+        with open("settings.yml", 'r') as f:
+            self.settings = yaml.load(f)
+
 
     def proxy_manager(self, proxy_host):
         proxy = Proxy({
@@ -73,7 +77,7 @@ class GlastonburyTickets(threading.Thread):
         html = driver.page_source
 
         # If we appear to be on the holding page we'll close the browser
-        if "holding page" in html or "processing the maximum" in html or "now sold out" in html:
+        if any(keyword in html for keyword in self.settings['holding_page_keywords']):
             driver.quit()
         else:
             self.found_valid_proxy = True
@@ -99,7 +103,7 @@ class GlastonburyTickets(threading.Thread):
             driver.quit()
 
             # If we are not on the holding page, we'll increment the success count for this proxy
-            if "holding page" not in html and "processing the maximum" not in html:
+            if any(keyword not in html for keyword in self.settings['holding_page_keywords']):
                 self.proxy_efficieny_semaphore.acquire()
                 self.proxy_efficieny[proxy] += 1
                 self.proxy_efficieny_semaphore.release()
