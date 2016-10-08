@@ -3,6 +3,7 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
   config.ssh.username = 'vagrant'
+  config.vm.network "forwarded_port", guest: 9999, host: 9999
 
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--memory", "1024"]

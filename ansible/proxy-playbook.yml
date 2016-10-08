@@ -1,9 +1,6 @@
 ﻿---
+
 - name: Squid proxy setup
   hosts: proxy
-  vars:
-    squid_proxy_user: user
-    squid_proxy_password: 1zCHReR56In6g 
-
   roles:
     - squid.proxy
