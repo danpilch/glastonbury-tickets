@@ -5,12 +5,14 @@ from concurrent.futures import ThreadPoolExecutor
 
 class GlastonburyTickets(threading.Thread):
 
-    def __init__(self, base_url, proxy_file):
+    def __init__(self, base_url, proxy_file, thread_pool):
         self.threads = []
+        self.thread_pool = thread_pool
         self.base_url = base_url
         self.proxy_list = [line.strip() for line in open(proxy_file, 'r')]
         self.proxy_efficieny = {}
         self.proxy_efficieny_semaphore = threading.BoundedSemaphore()
+        self.found_valid_proxy = False
 
     def proxy_manager(self, proxy_host):
         proxy = Proxy({
@@ -47,31 +49,24 @@ class GlastonburyTickets(threading.Thread):
 
         print("\nSpawning browsers for each proxy: {:d} browsers will be loaded simultaneously".format(len(self.proxy_list)))
 
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=self.thread_pool) as executor:
             for proxy in self.proxy_list:
                 future = executor.submit(self.find_successful_host, proxy)
-                # print(future.result())
-        # for proxy in self.proxy_list:
-        #     t = threading.Thread(target=self.find_successful_host, args=(proxy,))
-        #     self.threads.append(t)
-        #     t.start()
 
     def calc_efficiency_for_hosts(self):
 
         print("\nSpawning browsers for each proxy: {:d} browsers will be loaded simultaneously".format(len(self.proxy_list)))
 
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=self.thread_pool) as executor:
             for proxy in self.proxy_list:
                 future = executor.submit(self.calc_proxy_efficiency, proxy)
-                # print(future.result())
-        # for proxy in self.proxy_list:
-        #     t = threading.Thread(target=self.calc_proxy_efficiency, args=(proxy,))
-        #     self.threads.append(t)
-        #     t.start()
 
     def find_successful_host(self, proxy):
 
         print("Will now check if connection is successful for proxy {!s}".format(proxy))
+
+        if self.found_valid_proxy == True:
+            return
 
         # Get the HTML of the page
         driver = self.get_webdriver(proxy)
@@ -80,6 +75,9 @@ class GlastonburyTickets(threading.Thread):
         # If we appear to be on the holding page we'll close the browser
         if "holding page" in html or "processing the maximum" in html or "now sold out" in html:
             driver.quit()
+        else
+            self.found_valid_proxy = True
+
 
     def calc_proxy_efficiency(self, proxy):
 

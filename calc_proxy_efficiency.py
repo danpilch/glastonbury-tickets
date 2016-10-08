@@ -14,7 +14,7 @@ def main():
     args = parser.parse_args()
 
     # Start the process
-    tickets = GlastonburyTickets(base_url=args.base_url, proxy_file=args.proxy_file)
+    tickets = GlastonburyTickets(base_url=args.base_url, proxy_file=args.proxy_file, thread_pool=5)
     tickets.calc_efficiency_for_hosts()
 
 if __name__ == "__main__":
