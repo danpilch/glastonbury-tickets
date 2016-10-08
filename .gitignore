@@ -1,3 +1,4 @@
 test
 *.pyc
 .vagrant
+proxy_list.txt
