@@ -1,6 +1,7 @@
 from selenium.webdriver.common.proxy import *
 from selenium import webdriver
 import threading
+import random
 import yaml
 from concurrent.futures import ThreadPoolExecutor
 
@@ -11,6 +12,8 @@ class GlastonburyTickets(threading.Thread):
         self.thread_pool = thread_pool
         self.base_url = base_url
         self.proxy_list = [line.strip() for line in open(proxy_file, 'r')]
+        # Shuffle proxies
+        random.shuffle(self.proxy_list)
         self.proxy_efficieny = {}
         self.proxy_efficieny_semaphore = threading.BoundedSemaphore()
         self.found_valid_proxy = False
