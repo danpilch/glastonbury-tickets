@@ -36,7 +36,7 @@ class DOInstances(object):
         droplets = self.manager.get_all_droplets()
         for droplet in droplets:
             if self.server_prefix in str(droplet):
-                print("user:xxjf9@{!s}:9999".format(droplet.ip_address))
+                print("{!s}:9999".format(droplet.ip_address))
 
         print("Complete")
 

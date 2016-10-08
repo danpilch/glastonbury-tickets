@@ -12,12 +12,6 @@
     dest: /etc/squid/ 
     backup: yes
 
-- name: Configure Squid Proxy User/Password
-  template: 
-    src: passwd 
-    dest: /etc/squid/ 
-    backup: yes
-
 - name: Start Squid Proxy
   service: 
     name: squid 
