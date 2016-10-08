@@ -6,7 +6,7 @@ import os
 class DOInstances(object):
     def __init__(self, instance_count, instance_region, server_prefix):
         # Get the api token from your account
-        self.do_api_token = ""
+        self.do_api_token = "09858bd19b92d3457af5cac688962d008018c0945d8e36eb85dcac2cd942dd14"
         self.manager = digitalocean.Manager(token=self.do_api_token)
         self.instance_count = instance_count
         self.region = instance_region
@@ -20,9 +20,9 @@ class DOInstances(object):
     def create(self, image_id):
         print("Creating proxies")
         for instance in range(0, self.instance_count):
-            print("Creating {!s}-{!s}".format(self.server_prefix, instance))
+            print("Creating {!s}-{!s}-{!s}".format(self.server_prefix, self.region, instance))
             droplet = digitalocean.Droplet(token=self.do_api_token,
-                    name = "{!s}-{!s}".format(self.server_prefix, instance),
+                    name = "{!s}-{!s}-{!s}".format(self.server_prefix, self.region, instance),
                     region = self.region,
                     image = image_id,
                     size_slug = self.image_size,
