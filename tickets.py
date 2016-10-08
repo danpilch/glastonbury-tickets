@@ -24,7 +24,7 @@ class GlastonburyTickets(threading.Thread):
 
     def get_webdriver(self, proxy):
 
-        print "Running FF instance for proxy: {0}".format(proxy)
+        print("Running FF instance for proxy: {!s}".format(proxy))
 
         # Load page in Firefox and extract HTML
         proxy_instance = self.proxy_manager(proxy)
@@ -35,7 +35,7 @@ class GlastonburyTickets(threading.Thread):
 
     def spawn_browsers(self):
 
-        print "\nSpawning browsers for each proxy: {0} browsers will be loaded simultaneously".format(len(self.proxy_list))
+        print("\nSpawning browsers for each proxy: {:d} browsers will be loaded simultaneously".format(len(self.proxy_list)))
 
         for proxy in self.proxy_list:
             t = threading.Thread(target=self.calc_proxy_efficiency, args=(proxy,))
@@ -44,7 +44,7 @@ class GlastonburyTickets(threading.Thread):
 
     def find_successful_host_from_proxies(self):
 
-        print "\nSpawning browsers for each proxy: {0} browsers will be loaded simultaneously".format(len(self.proxy_list))
+        print("\nSpawning browsers for each proxy: {:d} browsers will be loaded simultaneously".format(len(self.proxy_list)))
 
         for proxy in self.proxy_list:
             t = threading.Thread(target=self.find_successful_host, args=(proxy,))
@@ -53,7 +53,7 @@ class GlastonburyTickets(threading.Thread):
 
     def calc_efficiency_for_hosts(self):
 
-        print "\nSpawning browsers for each proxy: {0} browsers will be loaded simultaneously".format(len(self.proxy_list))
+        print("\nSpawning browsers for each proxy: {:d} browsers will be loaded simultaneously".format(len(self.proxy_list)))
 
         for proxy in self.proxy_list:
             t = threading.Thread(target=self.calc_proxy_efficiency, args=(proxy,))
@@ -62,7 +62,7 @@ class GlastonburyTickets(threading.Thread):
 
     def find_successful_host(self, proxy):
 
-        print "Will now check if connection is successful for proxy {0}".format(proxy)
+        print("Will now check if connection is successful for proxy {!s}".format(proxy))
 
         # Get the HTML of the page
         driver = self.get_webdriver(proxy)
@@ -76,7 +76,7 @@ class GlastonburyTickets(threading.Thread):
 
         try_count = 5
 
-        print "Will now try and load the site {0} times for proxy {1}".format(5, proxy)
+        print("Will now try and load the site {:d} times for proxy {!s}".format(5, proxy))
 
         # Set initial success count to 0
         self.proxy_efficieny_semaphore.acquire()
@@ -97,5 +97,5 @@ class GlastonburyTickets(threading.Thread):
                 self.proxy_efficieny[proxy] += 1
                 self.proxy_efficieny_semaphore.release()
 
-        print "\nSuccess count for each proxy:"
-        print self.proxy_efficieny
+        print("\nSuccess count for each proxy:")
+        print(self.proxy_efficieny)
