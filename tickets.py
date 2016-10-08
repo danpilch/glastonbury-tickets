@@ -75,7 +75,7 @@ class GlastonburyTickets(threading.Thread):
         # If we appear to be on the holding page we'll close the browser
         if "holding page" in html or "processing the maximum" in html or "now sold out" in html:
             driver.quit()
-        else
+        else:
             self.found_valid_proxy = True
 
 
