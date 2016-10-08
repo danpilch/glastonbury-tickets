@@ -1,6 +1,7 @@
 from selenium.webdriver.common.proxy import *
 from selenium import webdriver
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 class GlastonburyTickets(threading.Thread):
 
@@ -46,19 +47,27 @@ class GlastonburyTickets(threading.Thread):
 
         print("\nSpawning browsers for each proxy: {:d} browsers will be loaded simultaneously".format(len(self.proxy_list)))
 
-        for proxy in self.proxy_list:
-            t = threading.Thread(target=self.find_successful_host, args=(proxy,))
-            self.threads.append(t)
-            t.start()
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for proxy in self.proxy_list:
+                future = executor.submit(self.find_successful_host, proxy)
+                # print(future.result())
+        # for proxy in self.proxy_list:
+        #     t = threading.Thread(target=self.find_successful_host, args=(proxy,))
+        #     self.threads.append(t)
+        #     t.start()
 
     def calc_efficiency_for_hosts(self):
 
         print("\nSpawning browsers for each proxy: {:d} browsers will be loaded simultaneously".format(len(self.proxy_list)))
 
-        for proxy in self.proxy_list:
-            t = threading.Thread(target=self.calc_proxy_efficiency, args=(proxy,))
-            self.threads.append(t)
-            t.start()
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for proxy in self.proxy_list:
+                future = executor.submit(self.calc_proxy_efficiency, proxy)
+                # print(future.result())
+        # for proxy in self.proxy_list:
+        #     t = threading.Thread(target=self.calc_proxy_efficiency, args=(proxy,))
+        #     self.threads.append(t)
+        #     t.start()
 
     def find_successful_host(self, proxy):
 
