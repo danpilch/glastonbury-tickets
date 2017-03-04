@@ -1,4 +1,6 @@
-# tickets
+# Glastonbury tickets
+
+Scripts to aid in the attempt of securing glastonbury tickets
 
 ## Installation
 
